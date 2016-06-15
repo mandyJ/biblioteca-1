@@ -1,29 +1,42 @@
 package com.thoughtworks.biblioteca;
 
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
 import java.io.PrintStream;
 import java.util.ArrayList;
 
 public class Application {
 
     private ArrayList<Book> books;
+    private BufferedReader bufferedReader;
     private PrintStream printStream;
-    private ArrayList<String> bookTitles;
 
-    public Application(ArrayList<String> bookTitles, ArrayList<Book> books, PrintStream printStream) {
+    public Application(ArrayList<Book> books, PrintStream printStream, BufferedReader bufferedReader) {
 
         this.printStream = printStream;
-        this.bookTitles = bookTitles;
         this.books = books;
-
-        // TODO finish adding books arraylist
-
+        this.bufferedReader = bufferedReader;
     }
 
 
 
     public void start() {
         printStream.println("Welcome");
-        for(String book : bookTitles)
-            printStream.println(book);
+
+        printStream.println("Enter an option:");
+        printStream.println("1: List Books");
+
+
+        try{
+            String userChoice = bufferedReader.readLine();
+
+            if(userChoice.equals("1")){
+                for(Book book : books)
+                    book.printBookDetails();
+            }
+        }catch(Exception e){
+            printStream.println(e.getMessage());
+        }
+
     }
 }

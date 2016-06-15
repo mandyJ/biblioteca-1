@@ -3,62 +3,68 @@ package com.thoughtworks.biblioteca;
 import org.junit.Before;
 import org.junit.Test;
 
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
 import java.io.PrintStream;
 import java.util.ArrayList;
 
 import static org.mockito.Matchers.contains;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.*;
 
 public class ApplicationTest {
     PrintStream printStream;
-    ArrayList<String> bookTitles;
     ArrayList<Book> books;
-    String title;
+    Book book;
+    Application application;
+    BufferedReader bufferedReader;
 
 
     @Before
     public void setUp() throws Exception {
         printStream = mock(PrintStream.class);
-        bookTitles = new ArrayList<String>();
-        title = "Stardust";
-        bookTitles.add(title);
+        bufferedReader = mock(BufferedReader.class);
+        books = new ArrayList<Book>();
+        book = mock(Book.class);
+        books.add(book);
+        application = new Application(books, printStream, bufferedReader);
     }
 
     @Test
     public void shouldWelcomeUserWhenStarting() {
         // Arrange OR Given
-        Application application = new Application(new ArrayList<String>(), books, printStream);
         // Action OR When
         application.start();
         // Assert OR Then
         verify(printStream).println(contains("Welcome"));
     }
 
-    @Test
-    public void shouldDisplayListOfBooksAfterWelcoming(){
-        Application application = new Application(bookTitles, books, printStream);
 
+    @Test
+    public void shouldDisplayListBooksOptionAfterWelcome() {
         application.start();
 
-        verify(printStream).println(contains(title));
-
+        verify(printStream).println(contains("Enter an option:"));
+        verify(printStream).println(contains("1: List Books"));
     }
 
     @Test
-    public void shouldDisplayFormattedListOfBooksWithAuthorAndYear() {
-        String author = "Neil Gaiman";
-        int year = 1993;
-        Book book = new Book(title, author, year);
-        ArrayList<Book> books = new ArrayList<Book>();
-        books.add(book);
-        Application application = new Application(bookTitles, books, printStream);
+    public void shouldNotPrintBookListBeforeUserChoosesOption() throws Exception {
+        when(bufferedReader.readLine()).thenReturn("");
 
         application.start();
 
-
-        verify(printStream).println(contains(title));
-        verify(printStream).println(contains(author));
-        verify(printStream).println(contains(year + ""));
+        verify(book, never()).printBookDetails();
     }
+
+    @Test
+    public void shouldPrintBookDetailsWhenUserRequestsList() throws Exception{
+        when(bufferedReader.readLine()).thenReturn("1");
+
+        application.start();
+
+        verify(book).printBookDetails();
+    }
+    
+
+
 }

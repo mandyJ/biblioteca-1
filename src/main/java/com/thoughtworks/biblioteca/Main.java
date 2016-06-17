@@ -1,17 +1,25 @@
 package com.thoughtworks.biblioteca;
 
 import java.io.BufferedReader;
+import java.io.IOException;
 import java.io.InputStreamReader;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
+import java.io.PrintStream;
+import java.util.*;
 
 public class Main {
-    public static void main(String[] args){
+    public static void main(String[] args) throws IOException {
+        Map<String, String> userOptions = new HashMap<String, String>();
+        userOptions.put("1", "List Books");
+        MainMenu mainMenu;
+        PrintStream printStream = new PrintStream(System.out);
+
         List<Book> books = new ArrayList<Book>();
-        Collections.addAll(books, new Book("Harry Potter", "J.K. Rowling", 1636, System.out), new Book("Stardust", "Neil Gaiman", 1665, System.out));
-        MainMenu mainMenu = new MainMenu(books, System.out, new BufferedReader(new InputStreamReader(System.in)));
+        books.add(new Book("Harry Potter", "J.K. Rowling", 2001, printStream));
         Library library = new Library(books);
-//        mainMenu.showMenuOptionsAndGrabInput();
+
+        CommandHandler commandHandler = new CommandHandler(userOptions, library, printStream);
+        BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(System.in));
+        mainMenu = new MainMenu(userOptions, commandHandler, printStream, bufferedReader);
+        mainMenu.showMenuOptionsAndGrabInput();
     }
 }

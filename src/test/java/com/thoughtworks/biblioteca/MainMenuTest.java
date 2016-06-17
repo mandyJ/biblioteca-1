@@ -21,6 +21,7 @@ public class MainMenuTest {
     private PrintStream printstream;
     private BufferedReader bufferedReader;
     private MainMenu mainMenu;
+    CommandHandler commandHandler;
 
     @Before
     public void setUp() throws Exception {
@@ -30,11 +31,12 @@ public class MainMenuTest {
         Map<String,String> menuOptions = new HashMap<String, String>();
         menuOptions.put("1", "List Books");
         menuOptions.put("2", "Some other option");
-        mainMenu = new MainMenu( menuOptions, printstream );
+        commandHandler = mock(CommandHandler.class);
+        mainMenu = new MainMenu(menuOptions, commandHandler, printstream, bufferedReader);
     }
 
     @Test
-    public void shouldListMenuOptionsWhenShowMenuOptions() {
+    public void shouldListMenuOptionsWhenShowMenuOptions() throws IOException {
 
         mainMenu.showMenuOptionsAndGrabInput();
 
@@ -44,9 +46,12 @@ public class MainMenuTest {
     }
 
     @Test
-    public void shouldGiveCommandHandlerUserCommandWhenUserInputsCommand(){
+    public void shouldGiveCommandHandlerUserCommandWhenUserInputsCommand() throws IOException {
+        when(bufferedReader.readLine()).thenReturn("1");
 
+        mainMenu.showMenuOptionsAndGrabInput();
 
+        verify(commandHandler).handleCommand("1");
     }
 //
 //    @Test

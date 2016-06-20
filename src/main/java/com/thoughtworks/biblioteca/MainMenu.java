@@ -20,17 +20,21 @@ public class MainMenu {
     }
 
     public void showMenuOptionsAndGrabInput() throws IOException {
-        printStream.println("Enter an option:");
-
         Set<String> optionList = menuOptions.keySet();
+
+        printStream.println("Enter an option:");
 
         for (String optionKey: optionList){
             printStream.println(optionKey + ": " + menuOptions.get(optionKey));
         }
 
+
         String userOption = bufferedReader.readLine();
 
-        commandHandler.handleCommand(userOption);
+        while(!menuOptions.containsKey(userOption)) {
+            printStream.println("Select a valid option!");
+            userOption = bufferedReader.readLine();
+        }
 
     }
 

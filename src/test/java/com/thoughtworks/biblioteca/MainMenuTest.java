@@ -11,9 +11,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import static org.junit.Assert.*;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 public class MainMenuTest {
 
@@ -22,15 +20,14 @@ public class MainMenuTest {
     private BufferedReader bufferedReader;
     private MainMenu mainMenu;
     CommandHandler commandHandler;
+    Map<String,String> menuOptions;
 
     @Before
     public void setUp() throws Exception {
         books = mock(ArrayList.class);
         printstream = mock(PrintStream.class);
         bufferedReader = mock(BufferedReader.class);
-        Map<String,String> menuOptions = new HashMap<String, String>();
-        menuOptions.put("1", "List Books");
-        menuOptions.put("2", "Some other option");
+        menuOptions = mock(Map.class);
         commandHandler = mock(CommandHandler.class);
         mainMenu = new MainMenu(menuOptions, commandHandler, printstream, bufferedReader);
     }
@@ -53,19 +50,15 @@ public class MainMenuTest {
 
         verify(commandHandler).handleCommand("1");
     }
-//
-//    @Test
-//    public void shouldReturnStringWhenUserInputs() throws IOException {
-//        when(bufferedReader.readLine()).thenReturn("1");
-//
-//        assertEquals("1", mainMenu.readUserInput());
-//
-//    }
-//
-//    @Test
-//    public void shouldReturn0WhenUserEntersInvalidOption() throws IOException {
-//        when(bufferedReader.readLine()).thenReturn("bad string");
-//
-//        assertEquals("0", mainMenu.readUserInput());
-//    }
+
+    @Test
+    public void shouldRepromptUserWhenUserEntersInvalidOption() throws IOException {
+        when(menuOptions.containsKey(anyString())).thenReturn(false, true);
+
+        mainMenu.showMenuOptionsAndGrabInput();
+
+        verify(printstream).println("Select a valid option!");
+    }
+
+
 }

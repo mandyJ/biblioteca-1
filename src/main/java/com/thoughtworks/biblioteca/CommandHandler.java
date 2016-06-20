@@ -1,27 +1,20 @@
 package com.thoughtworks.biblioteca;
 
-import java.io.IOException;
-import java.io.PrintStream;
 import java.util.Map;
 
 public class CommandHandler {
-    private Map<String, String> commandMap;
-    private Library library;
-    private PrintStream printStream;
+    private Map<String, Command> commandMap;
+    private InputValidator inputValidator;
 
-    public CommandHandler(Map<String, String> commandMap, Library library, PrintStream printStream){
+    public CommandHandler(Map<String, Command> commandMap, InputValidator inputValidator){
         this.commandMap = commandMap;
-        this.library = library;
-        this.printStream = printStream;
+        this.inputValidator = inputValidator;
     }
 
-    public void handleCommand(String userOptionChoice) {
-        if(userOptionChoice.equals("1")){
-            library.listBooks();
-        }else{
-            printStream.println("Please enter a valid option.");
-        }
-    }
 
+    public void executeValidCommand() {
+        String userOption = inputValidator.getValidInputFromUser();
+        commandMap.get(userOption).executeCommand();
+    }
 
 }

@@ -3,39 +3,48 @@ package com.thoughtworks.biblioteca;
 import org.junit.Before;
 import org.junit.Test;
 
+import java.io.BufferedReader;
 import java.io.PrintStream;
+import java.util.HashMap;
 import java.util.Map;
 
-import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
 
 public class CommandHandlerTest {
 
-    private Library library;
-    Map userOptions;
+    Map <String, Command> userOptions;
     CommandHandler commandHandler;
     private PrintStream printStream;
+    private ListBooksCommand listBooksOption;
+    private BufferedReader bufferedReader;
+    private InputValidator inputValidator;
 
     @Before
     public void setUp(){
-        userOptions = mock(Map.class);
-        library = mock(Library.class);
+        listBooksOption = mock(ListBooksCommand.class);
+        userOptions = new HashMap<String, Command>(){};
+        userOptions.put("1", listBooksOption);
         printStream = mock(PrintStream.class);
+        bufferedReader = mock(BufferedReader.class);
+        inputValidator = mock(InputValidator.class);
+        commandHandler = new CommandHandler(userOptions, inputValidator);
+    }
 
-        commandHandler = new CommandHandler(userOptions, library, printStream);
+
+    @Test
+    public void shouldInteractWithInputValidatorWhenExecuteCommand() {
+
+        commandHandler.executeValidCommand();
+
+        verify(inputValidator).getValidInputFromUser();
     }
 
     @Test
-    public void shouldListBooksWhenHandlerReceives1() {
-        commandHandler.handleCommand("1");
+    public void shouldExecuteCommandWhenCommandIsInput() {
+        when(inputValidator.getValidInputFromUser()).thenReturn("1");
 
-        verify(library).listBooks();
-    }
+        commandHandler.executeValidCommand();
 
-    @Test
-    public void shouldInformInvalidOptionWhenInvalidInput() {
-        commandHandler.handleCommand("bad command");
-
-        verify(printStream).println("Please enter a valid option.");
+        verify(listBooksOption).executeCommand();
     }
 }

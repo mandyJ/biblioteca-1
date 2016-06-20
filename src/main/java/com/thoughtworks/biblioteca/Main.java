@@ -8,18 +8,16 @@ import java.util.*;
 
 public class Main {
     public static void main(String[] args) throws IOException {
-        Map<String, String> userOptions = new HashMap<String, String>();
-        userOptions.put("1", "List Books");
-        MainMenu mainMenu;
+        Map<String, Command> userOptions = new HashMap<>();
+        List<Book> books = new ArrayList<>();
         PrintStream printStream = new PrintStream(System.out);
-
-        List<Book> books = new ArrayList<Book>();
         books.add(new Book("Harry Potter", "J.K. Rowling", 2001, printStream));
         Library library = new Library(books);
-
-        CommandHandler commandHandler = new CommandHandler(userOptions, library, printStream);
+        userOptions.put("1", new ListBooksCommand(library));
         BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(System.in));
-        mainMenu = new MainMenu(userOptions, commandHandler, printStream, bufferedReader);
-        mainMenu.showMenuOptionsAndGrabInput();
+        InputValidator inputValidator = new InputValidator(userOptions, printStream, bufferedReader);
+        CommandHandler commandHandler = new CommandHandler(userOptions, inputValidator);
+        MainMenu mainMenu = new MainMenu(userOptions, commandHandler, printStream);
+        mainMenu.startOptions();
     }
 }

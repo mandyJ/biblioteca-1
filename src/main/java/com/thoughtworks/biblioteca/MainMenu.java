@@ -1,41 +1,35 @@
 package com.thoughtworks.biblioteca;
 
-import java.io.BufferedReader;
-import java.io.IOException;
 import java.io.PrintStream;
 import java.util.Map;
-import java.util.Set;
 
 public class MainMenu {
-    private Map<String, String> menuOptions;
+    private Map<String, Command> menuOptions;
     private CommandHandler commandHandler;
     private PrintStream printStream;
-    private BufferedReader bufferedReader;
 
-    public MainMenu(Map<String, String> menuOptions, CommandHandler commandHandler, PrintStream printStream, BufferedReader bufferedReader) {
+    public MainMenu(Map<String, Command> menuOptions, CommandHandler commandHandler, PrintStream printStream) {
         this.menuOptions = menuOptions;
         this.commandHandler = commandHandler;
         this.printStream = printStream;
-        this.bufferedReader = bufferedReader;
     }
 
-    public void showMenuOptionsAndGrabInput() throws IOException {
-        Set<String> optionList = menuOptions.keySet();
+    public void startOptions() {
 
         printStream.println("Enter an option:");
 
-        for (String optionKey: optionList){
-            printStream.println(optionKey + ": " + menuOptions.get(optionKey));
+        for (String optionKey: menuOptions.keySet()){
+            printStream.println(optionKey + ": " + menuOptions.get(optionKey).showCommandName());
         }
 
+        //while(quitCommand.shouldNotQuit()){
+            commandHandler.executeValidCommand();
+        //}
 
-        String userOption = bufferedReader.readLine();
+    }
 
-        while(!menuOptions.containsKey(userOption)) {
-            printStream.println("Select a valid option!");
-            userOption = bufferedReader.readLine();
-        }
-
+    private boolean shouldNotQuit(){
+        return true;
     }
 
 }

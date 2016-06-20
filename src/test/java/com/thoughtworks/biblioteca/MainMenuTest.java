@@ -4,13 +4,10 @@ import org.junit.Before;
 import org.junit.Test;
 
 import java.io.BufferedReader;
-import java.io.IOException;
 import java.io.PrintStream;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.Map;
 
-import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
 
 public class MainMenuTest {
@@ -20,7 +17,7 @@ public class MainMenuTest {
     private BufferedReader bufferedReader;
     private MainMenu mainMenu;
     CommandHandler commandHandler;
-    Map<String,String> menuOptions;
+    Map<String,Command> menuOptions;
 
     @Before
     public void setUp() throws Exception {
@@ -29,36 +26,15 @@ public class MainMenuTest {
         bufferedReader = mock(BufferedReader.class);
         menuOptions = mock(Map.class);
         commandHandler = mock(CommandHandler.class);
-        mainMenu = new MainMenu(menuOptions, commandHandler, printstream, bufferedReader);
+        mainMenu = new MainMenu(menuOptions, commandHandler, printstream);
     }
 
     @Test
-    public void shouldListMenuOptionsWhenShowMenuOptions() throws IOException {
+    public void shouldExecuteCommandHandlerAfterMenuIsDisplay() {
 
-        mainMenu.showMenuOptionsAndGrabInput();
+        mainMenu.startOptions();
 
-        verify(printstream).println("Enter an option:");
-        verify(printstream).println("1: List Books");
-        verify(printstream).println("2: Some other option");
+        verify(commandHandler).executeValidCommand();
     }
-
-    @Test
-    public void shouldGiveCommandHandlerUserCommandWhenUserInputsCommand() throws IOException {
-        when(bufferedReader.readLine()).thenReturn("1");
-
-        mainMenu.showMenuOptionsAndGrabInput();
-
-        verify(commandHandler).handleCommand("1");
-    }
-
-    @Test
-    public void shouldRepromptUserWhenUserEntersInvalidOption() throws IOException {
-        when(menuOptions.containsKey(anyString())).thenReturn(false, true);
-
-        mainMenu.showMenuOptionsAndGrabInput();
-
-        verify(printstream).println("Select a valid option!");
-    }
-
 
 }
